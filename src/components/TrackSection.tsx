@@ -3,6 +3,7 @@ import type { Track } from '../types';
 import { Badge } from './Badge';
 import { Card, Eyebrow } from './Card';
 import { ResourceLink } from './ResourceLink';
+import { RESOURCE_KIND_ICONS, SparkIcon } from './icons';
 
 interface TrackSectionProps {
   track: Track;
@@ -36,7 +37,7 @@ export function TrackSection({ track, index, isFocus = false, monthName }: Track
         <div className="mt-6 space-y-6">
           {groups.map((group) => (
             <div key={group.kind}>
-              <Eyebrow>{group.label}</Eyebrow>
+              <Eyebrow icon={RESOURCE_KIND_ICONS[group.kind]}>{group.label}</Eyebrow>
               <ul className="mt-3 space-y-2">
                 {group.items.map((resource) => (
                   <ResourceLink key={`${resource.title}-${resource.url}`} resource={resource} />
@@ -47,7 +48,7 @@ export function TrackSection({ track, index, isFocus = false, monthName }: Track
         </div>
 
         <div className="mt-6 rounded-control border border-grey-200 bg-grey-50 p-4">
-          <Eyebrow>Do</Eyebrow>
+          <Eyebrow icon={SparkIcon}>Do</Eyebrow>
           <p className="mt-2 max-w-reading leading-relaxed text-grey-700">{track.action}</p>
         </div>
       </Card>

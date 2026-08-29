@@ -16,7 +16,7 @@ export function Button({ variant = 'secondary', className = '', ...props }: Butt
   return (
     <button
       {...props}
-      className={`rounded-control border px-4 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-grey-200 disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex items-center gap-2 rounded-control border px-4 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-grey-200 disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
     />
   );
 }
