@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Even the inherited root colour is a token — never the UA's pure black. */
+    @apply text-grey-900;
+  }
+
+  body {
+    @apply bg-grey-50 font-sans text-grey-700 antialiased;
+  }
+
+  /* Long resource titles and URLs must wrap, never truncate or overflow a card. */
+  h1,
+  h2,
+  h3,
+  p,
+  a,
+  li,
+  span {
+    overflow-wrap: anywhere;
+  }
+}
