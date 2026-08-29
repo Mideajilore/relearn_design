@@ -82,8 +82,68 @@ override lives on Today and persists.
 ## Your data
 
 - **Export JSON** on Today downloads every logged day as a portable file.
-- **Reset all data** asks for confirmation, then deletes everything permanently.
-- Nothing is sent anywhere. Clearing site data clears the tracker — export first.
+- **Reset all data** asks for confirmation, then deletes everything permanently
+  (locally *and* in Supabase, if sync is on).
+- With sync off, nothing is sent anywhere and clearing site data clears the
+  tracker — export first.
+
+## Cross-device sync (optional)
+
+Without any env vars the app is local-only, exactly as it started. Add the
+three below and the same streak and history follow you from phone to laptop.
+
+### 1. Create the tables
+
+In your Supabase project: **SQL Editor → New query**, paste
+[`supabase/schema.sql`](./supabase/schema.sql), Run. That creates
+`daily_entries` and `settings` and enables RLS.
+
+### 2. Set the env vars
+
+Copy `.env.example` to `.env.local` and fill in:
+
+| Variable                 | Where it comes from                                    |
+| ------------------------ | ------------------------------------------------------ |
+| `VITE_SUPABASE_URL`      | Supabase → Project Settings → API → Project URL        |
+| `VITE_SUPABASE_ANON_KEY` | same page → anon/publishable key (**not** service_role)|
+| `VITE_OWNER_KEY`         | any fixed string — `openssl rand -hex 16`              |
+
+`VITE_OWNER_KEY` tags your rows. **Both devices must use the same value**, which
+they will, because they load the same deployment.
+
+### 3. Add the same three to Vercel
+
+Project → **Settings → Environment Variables**, add all three to *Production*,
+*Preview* and *Development*, then **redeploy** — Vite bakes `VITE_*` vars in at
+build time, so an existing deployment won't pick them up until it rebuilds.
+
+### What happens on first load
+
+If you already have v1 history in a browser, the first load after adding these
+vars pushes it to Supabase — once, guarded by a flag, and only when Supabase has
+no rows for your owner key yet. It can't overwrite data another device already
+synced, and if the push fails it retries on the next load rather than marking
+itself done. Nothing is lost.
+
+### How sync behaves
+
+- **Writes** hit `localStorage` first, so the UI never waits on the network,
+  then upsert to Supabase.
+- **Reads** prefer Supabase and fall back to the local cache when it's
+  unreachable.
+- **Offline** edits are queued and replayed on reconnect.
+- **Conflicts** on the same day are settled last-write-wins on `updated_at`.
+
+### Security, honestly
+
+The anon key and the owner key both ship in the JavaScript bundle. RLS is
+enabled, but a policy can't verify a secret the client itself supplies — so
+`owner_key` separates your rows, it doesn't protect them. Anyone with your site
+URL could read or write these two tables, and nothing else in the project.
+
+That's a fair trade for a personal habit tracker. If you ever want real
+protection, the upgrade is Supabase Auth — the note at the top of
+`supabase/schema.sql` spells it out.
 
 ## Layout
 
@@ -91,7 +151,9 @@ override lives on Today and persists.
 src/
   content/guide.ts    # the six tracks, bonus, cadence, follow list — modelled from the .md
   content/links.ts    # every outbound URL, single source of truth
-  lib/storage.ts      # typed async key/value wrapper over localStorage
+  lib/storage.ts      # typed async key/value wrapper: local cache + Supabase
+  lib/supabase.ts     # client, built from env only
+  lib/remote.ts       # RemoteStore interface + its Supabase implementation
   lib/streak.ts       # completion + streak rules (pure, unit-tested)
   lib/rotation.ts     # date → focus track
   lib/date.ts         # local-time ISO date helpers
@@ -106,13 +168,16 @@ Every outbound URL is in `src/content/links.ts`. Change it there and every route
 picks it up. Links whose current social handle couldn't be verified point at a
 search instead of a guessed `@handle` — accounts move, searches don't.
 
-### Swapping storage for a backend
+### The storage seam
 
 `src/lib/storage.ts` exposes a small async interface (`get`, `set`, `getAll`,
-`remove`) and nothing else in the app touches `localStorage`. Entries are stored
-one key per day (`entry:YYYY-MM-DD`), which maps directly onto a
-`daily_entries` table. Replacing the driver is the whole migration — no
-component changes.
+`remove`) and nothing else in the app touches `localStorage`. Entries are keyed
+one per day (`entry:YYYY-MM-DD`), mapping directly onto the `daily_entries`
+table.
+
+That seam is why adding sync changed no component, route, or style — the whole
+feature landed behind those four methods. A different backend later is one new
+implementation of `RemoteStore` in `src/lib/remote.ts`, nothing more.
 
 ## Design system
 
