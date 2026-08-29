@@ -2,6 +2,11 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Secrets — only .env.example is committed
+.env
+.env.*
+!.env.example
 .DS_Store
 .vercel
 *.log
