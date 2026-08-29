@@ -1,7 +1,16 @@
 import { Card, Eyebrow, SectionTitle } from '../components/Card';
 import { PageHeader } from '../components/PageHeader';
 import { Stat } from '../components/StreakBadge';
-import { CheckIcon } from '../components/icons';
+import {
+  CadenceIcon,
+  CalendarIcon,
+  CheckIcon,
+  CircleCheckIcon,
+  FlameIcon,
+  ListIcon,
+  PenIcon,
+  TrophyIcon,
+} from '../components/icons';
 import { CADENCE } from '../content/guide';
 import { daysInMonthOf, firstWeekdayOffset, formatLong, fromISODate } from '../lib/date';
 import { currentStreak, hasActivity, isComplete, longestStreak, totalComplete } from '../lib/streak';
@@ -29,16 +38,22 @@ export function History() {
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Stat value={currentStreak(state.entries, today)} label="Current streak" />
-        <Stat value={longestStreak(state.entries)} label="Longest streak" />
-        <Stat value={totalComplete(state.entries)} label="Complete days" />
+        <Stat
+          value={currentStreak(state.entries, today)}
+          label="Current streak"
+          icon={FlameIcon}
+        />
+        <Stat value={longestStreak(state.entries)} label="Longest streak" icon={TrophyIcon} />
+        <Stat value={totalComplete(state.entries)} label="Complete days" icon={CircleCheckIcon} />
       </div>
 
       <MonthHeatmap entries={state.entries} today={today} />
 
       {days.length === 0 ? (
         <Card as="section">
-          <SectionTitle className="text-lg">Nothing logged yet</SectionTitle>
+          <SectionTitle icon={CalendarIcon} className="text-lg">
+            Nothing logged yet
+          </SectionTitle>
           <p className="mt-2 max-w-reading leading-relaxed text-grey-500">
             Check off a slot on Today and write where you applied it. Days show up here as soon as
             there’s something on them.
@@ -46,7 +61,7 @@ export function History() {
         </Card>
       ) : (
         <section>
-          <SectionTitle className="text-lg">Logged days</SectionTitle>
+          <SectionTitle icon={ListIcon} className="text-lg">Logged days</SectionTitle>
           <ul className="mt-4 space-y-4">
             {days.map((entry) => (
               <HistoryRow key={entry.date} entry={entry} isToday={entry.date === today} />
@@ -86,7 +101,11 @@ function HistoryRow({ entry, isToday }: { entry: DailyEntry; isToday: boolean })
                     : 'border-grey-200 bg-white text-grey-300'
                 }`}
               >
-                {done ? <CheckIcon className="h-4 w-4" /> : null}
+                {done ? (
+                  <CheckIcon className="h-4 w-4 shrink-0" />
+                ) : (
+                  <CadenceIcon id={slot.icon} className="h-4 w-4 shrink-0" />
+                )}
                 {slot.slot}
               </li>
             );
@@ -96,7 +115,7 @@ function HistoryRow({ entry, isToday }: { entry: DailyEntry; isToday: boolean })
 
       {entry.appliedWhere.trim() ? (
         <div className="mt-4 rounded-control border border-grey-200 bg-grey-50 p-4">
-          <Eyebrow>Applied where</Eyebrow>
+          <Eyebrow icon={PenIcon}>Applied where</Eyebrow>
           <p className="mt-2 whitespace-pre-wrap leading-relaxed text-grey-700">
             {entry.appliedWhere}
           </p>
@@ -124,7 +143,9 @@ function MonthHeatmap({
   return (
     <Card as="section">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <SectionTitle className="text-lg">{monthName}</SectionTitle>
+        <SectionTitle icon={CalendarIcon} className="text-lg">
+          {monthName}
+        </SectionTitle>
         <span className="flex items-center gap-2 text-sm text-grey-500">
           <span className="inline-block h-3 w-3 rounded-control border border-grey-200 bg-white" />
           none

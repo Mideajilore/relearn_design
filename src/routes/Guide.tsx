@@ -6,6 +6,15 @@ import { PageHeader } from '../components/PageHeader';
 import { PersonLink, ResourceLink } from '../components/ResourceLink';
 import { TrackSection } from '../components/TrackSection';
 import {
+  CadenceIcon,
+  CalendarIcon,
+  ClockIcon,
+  PeopleIcon,
+  RepeatIcon,
+  SlidesIcon,
+  SparkIcon,
+} from '../components/icons';
+import {
   BONUS,
   CADENCE,
   FOLLOW_LIST,
@@ -37,7 +46,7 @@ export function Guide() {
 
       {/* -------------------------------------------------------- rotation -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">The rotation</SectionTitle>
+        <SectionTitle icon={CalendarIcon} className="text-lg">The rotation</SectionTitle>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
           One track per month as your focus; the daily cadence runs across all of them.
         </p>
@@ -84,7 +93,9 @@ export function Guide() {
 
       {/* ----------------------------------------------------------- bonus -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">{BONUS.title}</SectionTitle>
+        <SectionTitle icon={SlidesIcon} className="text-lg">
+          {BONUS.title}
+        </SectionTitle>
         <ul className="mt-4 space-y-2">
           {BONUS.resources.map((resource) => (
             <ResourceLink key={`${resource.title}-${resource.url}`} resource={resource} />
@@ -94,7 +105,7 @@ export function Guide() {
 
       {/* --------------------------------------------------------- cadence -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">The daily cadence</SectionTitle>
+        <SectionTitle icon={ClockIcon} className="text-lg">The daily cadence</SectionTitle>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
           ~30–45 min. Small and consistent beats heroic and abandoned.
         </p>
@@ -105,7 +116,8 @@ export function Guide() {
               key={slot.id}
               className="rounded-control border border-grey-200 bg-white p-3"
             >
-              <span className="flex flex-wrap items-baseline gap-2">
+              <span className="flex flex-wrap items-center gap-2">
+                <CadenceIcon id={slot.icon} className="h-4 w-4 shrink-0 text-grey-500" />
                 <span className="text-grey-900">{slot.slot}</span>
                 <span className="text-sm text-grey-500">{slot.time}</span>
               </span>
@@ -115,14 +127,16 @@ export function Guide() {
         </ul>
 
         <div className="mt-4 rounded-control border border-grey-200 bg-grey-50 p-4">
-          <Eyebrow>Weekly</Eyebrow>
+          <Eyebrow icon={RepeatIcon}>Weekly</Eyebrow>
           <p className="mt-2 max-w-reading leading-relaxed text-grey-700">{WEEKLY_REP}</p>
         </div>
       </Card>
 
       {/* ----------------------------------------------------- follow list -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">The consolidated follow list</SectionTitle>
+        <SectionTitle icon={PeopleIcon} className="text-lg">
+          The consolidated follow list
+        </SectionTitle>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
           {FOLLOW_LIST_CAVEAT}
         </p>
@@ -147,7 +161,7 @@ export function Guide() {
       </Card>
 
       <Card as="section" padding="sm">
-        <Eyebrow>The whole guide in one line</Eyebrow>
+        <Eyebrow icon={SparkIcon}>The whole guide in one line</Eyebrow>
         <p className="mt-2 max-w-reading leading-relaxed text-grey-700">{GUIDE_CLOSER}</p>
       </Card>
     </div>

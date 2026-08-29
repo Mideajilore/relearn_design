@@ -159,6 +159,7 @@ src/
   lib/date.ts         # local-time ISO date helpers
   lib/tracker.tsx     # the one piece of shared state, over the storage wrapper
   components/         # Card, ResourceLink, CheckItem, StreakBadge, TrackSection, Nav, …
+  components/icons.tsx # every inline SVG icon + the kind/cadence glyph maps
   routes/             # Today.tsx, Guide.tsx, History.tsx
 ```
 
@@ -189,3 +190,30 @@ implementation of `RemoteStore` in `src/lib/remote.ts`, nothing more.
   Tailwind values.
 - Card radius 12px, input/button radius 8px, hairlines 1px `grey-200`, input
   borders 1px `grey-300`.
+
+### Icons
+
+All icons are inline SVG in `src/components/icons.tsx` — no icon package, no
+dependency. They share one frame: a 20×20 viewBox with the artwork inside a
+2.5–17.5 box, `currentColor` stroke at 1.5 (2.25 only for `CheckIcon`, which
+sits reversed out of a filled square), round caps and joins, no fills.
+
+Three rules keep them from becoming clutter:
+
+- **Decorative, always.** Every icon is `aria-hidden` and sits next to text that
+  already says the same thing. Nothing in the app is icon-only, so a screen
+  reader loses nothing.
+- **An icon must distinguish something.** The kind glyph on a resource row
+  (book / watch / read / follow) earns its place because a track mixes kinds.
+  The same glyph on every row of the consolidated follow list would not, so
+  `PersonLink` has none.
+- **Sized by the caller on the 4px scale** — `h-4` (16) inline with text, `h-5`
+  (20) in a section title or nav item, `h-6` (24) in the streak tile. Tone is
+  `grey-500` beside a label, `grey-300` for the trailing external-link mark,
+  `success` when the row is complete.
+
+Two maps resolve content to a glyph, so a slot is drawn the same way on every
+route: `RESOURCE_KIND_ICONS` (by `Resource.kind`) and `CADENCE_ICONS` (by the
+`icon` field on each cadence slot, via the `CadenceIcon` helper). `SectionTitle`,
+`Eyebrow`, `CheckItem` and `Stat` each take an optional `icon`, so the gap and
+colour are set in one place rather than at every call site.

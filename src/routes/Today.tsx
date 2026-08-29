@@ -6,6 +6,18 @@ import { Card, Eyebrow, SectionTitle } from '../components/Card';
 import { CheckItem } from '../components/CheckItem';
 import { PageHeader } from '../components/PageHeader';
 import { StreakBadge } from '../components/StreakBadge';
+import {
+  AlertIcon,
+  ArchiveIcon,
+  ArrowRightIcon,
+  CADENCE_ICONS,
+  ClockIcon,
+  DownloadIcon,
+  PenIcon,
+  RepeatIcon,
+  TargetIcon,
+  TrashIcon,
+} from '../components/icons';
 import { CADENCE, WEEKLY_REP } from '../content/guide';
 import { formatLong, monthLabel } from '../lib/date';
 import { downloadStateAsJson } from '../lib/exportData';
@@ -49,8 +61,11 @@ export function Today() {
 
       {!persistent ? (
         <Card padding="sm">
-          <p className="text-sm text-grey-500">
-            Browser storage is unavailable here, so today’s entries won’t survive a reload.
+          <p className="flex items-start gap-2 text-sm text-grey-500">
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
+            <span className="min-w-0">
+              Browser storage is unavailable here, so today’s entries won’t survive a reload.
+            </span>
           </p>
         </Card>
       ) : null}
@@ -59,14 +74,17 @@ export function Today() {
         <StreakBadge streak={streak} todayComplete={complete} />
 
         <Card>
-          <Eyebrow>This month’s focus</Eyebrow>
+          <Eyebrow icon={TargetIcon}>This month’s focus</Eyebrow>
           <SectionTitle className="mt-2 text-lg">{track.title}</SectionTitle>
           <p className="mt-2 text-sm leading-relaxed text-grey-500">{track.premise}</p>
           <Link
             to={`/guide#${track.id}`}
-            className="mt-3 inline-block rounded-control text-grey-700 underline decoration-grey-300 underline-offset-4 transition-colors hover:text-grey-900 hover:decoration-grey-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-grey-200"
+            className="group mt-3 inline-flex items-center gap-2 rounded-control text-grey-700 transition-colors hover:text-grey-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-grey-200"
           >
-            Open this track in the guide
+            <span className="underline decoration-grey-300 underline-offset-4 transition-colors group-hover:decoration-grey-500">
+              Open this track in the guide
+            </span>
+            <ArrowRightIcon className="h-4 w-4 shrink-0 text-grey-300 transition-colors group-hover:text-grey-500" />
           </Link>
         </Card>
       </div>
@@ -74,7 +92,9 @@ export function Today() {
       {/* ---------------------------------------------------- daily cadence -- */}
       <Card as="section">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <SectionTitle className="text-lg">The daily cadence</SectionTitle>
+          <SectionTitle icon={ClockIcon} className="text-lg">
+            The daily cadence
+          </SectionTitle>
           {complete ? <Badge tone="success">Day complete</Badge> : <Badge tone="quiet">In progress</Badge>}
         </div>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
@@ -88,6 +108,7 @@ export function Today() {
               label={slot.slot}
               time={slot.time}
               description={slot.what}
+              icon={CADENCE_ICONS[slot.icon]}
               checked={todayEntry[slot.id]}
               onChange={(next) => setAction(slot.id, next)}
             />
@@ -98,7 +119,7 @@ export function Today() {
       {/* ------------------------------------------------------ applied where -- */}
       <Card as="section" className={complete ? 'border-success/40' : undefined}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <SectionTitle className="text-lg">
+          <SectionTitle icon={PenIcon} className="text-lg">
             <label htmlFor="applied-where">Applied where</label>
           </SectionTitle>
           {complete ? <Badge tone="success">Counts</Badge> : null}
@@ -126,13 +147,13 @@ export function Today() {
 
       {/* ------------------------------------------------------ weekly rep -- */}
       <Card as="section" padding="sm">
-        <Eyebrow>Weekly</Eyebrow>
+        <Eyebrow icon={RepeatIcon}>Weekly</Eyebrow>
         <p className="mt-2 max-w-reading leading-relaxed text-grey-700">{WEEKLY_REP}</p>
       </Card>
 
       {/* --------------------------------------------------------- settings -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">Focus track</SectionTitle>
+        <SectionTitle icon={TargetIcon} className="text-lg">Focus track</SectionTitle>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
           The rotation follows the calendar. Override it if you want to run a different track.
         </p>
@@ -163,13 +184,14 @@ export function Today() {
 
       {/* ------------------------------------------------------------- data -- */}
       <Card as="section">
-        <SectionTitle className="text-lg">Your data</SectionTitle>
+        <SectionTitle icon={ArchiveIcon} className="text-lg">Your data</SectionTitle>
         <p className="mt-2 max-w-reading text-sm leading-relaxed text-grey-500">
           Everything lives in this browser. Export it before you clear site data or switch machines.
         </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button variant="secondary" onClick={() => downloadStateAsJson(state)}>
+            <DownloadIcon className="h-4 w-4 shrink-0" />
             Export JSON
           </Button>
 
@@ -191,6 +213,7 @@ export function Today() {
             </>
           ) : (
             <Button variant="quiet" onClick={() => setConfirmingReset(true)}>
+              <TrashIcon className="h-4 w-4 shrink-0" />
               Reset all data
             </Button>
           )}

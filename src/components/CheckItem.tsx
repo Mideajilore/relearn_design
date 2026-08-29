@@ -1,9 +1,12 @@
 import { CheckIcon } from './icons';
+import type { IconComponent } from './icons';
 
 interface CheckItemProps {
   label: string;
   time?: string;
   description?: string;
+  /** Decorative glyph for the slot, shown beside the label. */
+  icon?: IconComponent;
   checked: boolean;
   onChange: (next: boolean) => void;
 }
@@ -12,7 +15,14 @@ interface CheckItemProps {
  * One checkable daily action. The whole row is the hit target — it needs to be
  * comfortable to tap on a phone.
  */
-export function CheckItem({ label, time, description, checked, onChange }: CheckItemProps) {
+export function CheckItem({
+  label,
+  time,
+  description,
+  icon: Glyph,
+  checked,
+  onChange,
+}: CheckItemProps) {
   return (
     <button
       type="button"
@@ -31,8 +41,15 @@ export function CheckItem({ label, time, description, checked, onChange }: Check
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-baseline gap-2">
-          <span className={checked ? 'text-grey-900' : 'text-grey-900'}>{label}</span>
+        <span className="flex flex-wrap items-center gap-2">
+          {Glyph ? (
+            <Glyph
+              className={`h-4 w-4 shrink-0 transition-colors ${
+                checked ? 'text-success' : 'text-grey-500'
+              }`}
+            />
+          ) : null}
+          <span className="text-grey-900">{label}</span>
           {time ? <span className="text-sm text-grey-500">{time}</span> : null}
         </span>
         {description ? (

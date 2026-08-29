@@ -329,6 +329,8 @@ interface CadenceSlot {
   slot: string;
   time: string;
   what: string;
+  /** Key into `CADENCE_ICONS`, so every surface draws the slot the same way. */
+  icon: 'book' | 'play' | 'spark';
 }
 
 /** The daily cadence, ~30–45 min. Drives the three checkable actions. */
@@ -338,18 +340,21 @@ export const CADENCE: CadenceSlot[] = [
     slot: 'Read',
     time: '10 min',
     what: 'The book of the month (one per track, in order)',
+    icon: 'book',
   },
   {
     id: 'input',
     slot: 'Input',
     time: '10 min',
     what: 'One creator: a Futur/Juxtopposed video, or one newsletter',
+    icon: 'play',
   },
   {
     id: 'applied',
     slot: 'Apply',
     time: '10–15 min',
     what: 'One decision-log entry or 3 real engagements on X/LinkedIn',
+    icon: 'spark',
   },
 ];
 

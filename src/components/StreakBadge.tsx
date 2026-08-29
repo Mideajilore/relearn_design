@@ -1,4 +1,5 @@
 import { FlameIcon } from './icons';
+import type { IconComponent } from './icons';
 
 interface StreakBadgeProps {
   streak: number;
@@ -37,11 +38,22 @@ export function StreakBadge({ streak, todayComplete }: StreakBadgeProps) {
 }
 
 /** Compact stat used alongside the streak on History. */
-export function Stat({ value, label }: { value: string | number; label: string }) {
+export function Stat({
+  value,
+  label,
+  icon: Glyph,
+}: {
+  value: string | number;
+  label: string;
+  icon?: IconComponent;
+}) {
   return (
     <div className="rounded-card border border-grey-200 bg-white p-4">
       <p className="text-2xl text-grey-900">{value}</p>
-      <p className="mt-1 text-sm text-grey-500">{label}</p>
+      <p className="mt-1 flex items-center gap-2 text-sm text-grey-500">
+        {Glyph ? <Glyph className="h-4 w-4 shrink-0" /> : null}
+        <span className="min-w-0">{label}</span>
+      </p>
     </div>
   );
 }
