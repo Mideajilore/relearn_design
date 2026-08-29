@@ -25,6 +25,12 @@ export interface DailyEntry {
   input: boolean;
   applied: boolean;
   appliedWhere: string;
+  /**
+   * ISO timestamp of the last write. Used only to settle conflicts when two
+   * devices edited the same day — last write wins. Absent on v1 entries
+   * written before sync existed.
+   */
+  updatedAt?: string;
 }
 
 export interface AppState {
